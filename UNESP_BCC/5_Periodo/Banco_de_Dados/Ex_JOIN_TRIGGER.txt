@@ -1,0 +1,4 @@
+Exercícios:
+1 - Utilizando o comando JOIN, aprente uma lista com o nome de todos os dependentes e a localização onde o funcionário relacionado trabalha.
+
+2 - Na tabela DEPARTAMENTOS, crie um campo nro_projetos, que irá armazenar o número de projetos relacionados com esse departamento. Construa uma PROCEDURE para atualizar esse campo que será chamada atravéz de TRIGGERS, que serão executadas toda vez que um registro for inserido, alterado ou excluído da tabela PROJETOS.

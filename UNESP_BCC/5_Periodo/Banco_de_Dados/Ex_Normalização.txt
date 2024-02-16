@@ -1,0 +1,115 @@
+Nota: Aqui eu estou explicando o que está acontecendo, mas na prova vocês podem apenas representar as novas tabelas, como nas aulas, sem precisar explicar.
+
+1 - Considere a seguinte tabela:
+
+Tabela "alunos":
+
+Colunas: "id_aluno" (chave primária), "nome_aluno", "disciplinas"
+Nessa tabela, a coluna "disciplinas" contém uma lista de disciplinas que o aluno está matriculado, separadas por vírgulas. Por exemplo, um registro pode ter "Matemática, História, Física" na coluna "disciplinas".
+
+Seu objetivo é normalizar essa tabela para a 1NF.
+
+Guia:
+
+A tabela "alunos" viola a 1ª Forma Normal (1NF) porque a coluna "disciplinas" contém múltiplos valores separados por vírgulas. Para atender à 1NF, precisamos remover essa repetição de dados.
+
+Resposta: 
+
+
+A nova estrutura de tabelas seria a seguinte:
+Tabela "alunos":
+Colunas: "id_aluno" (chave primária), "nome_aluno"
+Tabela "matriculas":
+Colunas: "id_matricula" (chave primária), "id_aluno" (chave estrangeira referenciando "id_aluno" na tabela "alunos"), "id_disciplina" (chave estrangeira referenciando "id_disciplina" na tabela "disciplinas")
+Tabela "disciplinas":
+Colunas: "id_disciplina" (chave primária), "nome_disciplina"
+Dessa forma, a tabela "matriculas" representa a associação entre alunos e disciplinas, permitindo que um aluno possa ter múltiplas matrículas em diferentes disciplinas. A tabela "disciplinas" armazena as informações das disciplinas, eliminando a repetição de nomes de disciplinas em cada registro da tabela "matriculas".
+###############################################################
+
+
+2 - Considere a seguinte tabela:
+
+Tabela "pedidos":
+
+Colunas: "id_pedido" (chave primária), "id_cliente" (chave estrangeira referenciando "id_cliente" na tabela "clientes"), "nome_cliente", "produto", "quantidade", "adicionais".
+Nessa tabela, a coluna "nome_cliente" contém o nome do cliente que fez o pedido, e a coluna "produto" contém o nome do produto pedido. A tabela adicionais é um campo multivalorado que podem conter diversos adicionais, como exemplo: {"catupiry", "bacon", "gorgonzola"}.
+
+Seu objetivo é normalizar essa tabela para a 2ª Forma Normal (2NF). Lembre-se que para estar na segunda forma normal, também é necessário estar na primeira forma normal.
+
+Guia:
+
+A tabela "pedidos" viola a 1ª e 2ª Forma Normal (1NF e 2NF) por que a coluna "adicionais" e multivalorada e as colunas "nome_cliente" e "produto" dependem parcialmente da chave primária. Para atender à 2NF, precisamos eliminar os campos multivalorados (deixando na 1NF) e a dependência parcial movendo essas informações para tabelas separadas.
+
+Resposta
+
+
+Podemos criar uma nova tabela "clientes" para armazenar as informações dos clientes, e uma tabela "itens_pedido" para armazenar os detalhes dos itens de cada pedido,  uma tabela "adicionais" para cadastrar os itens adicionais, e uma tabela "adicionais_item", para armazenar os adicionais do pedido.
+
+A nova estrutura de tabelas seria a seguinte:
+Tabela "clientes":
+Colunas: "id_cliente" (chave primária), "nome_cliente"
+Tabela "pedidos":
+Colunas: "id_pedido" (chave primária), "id_cliente" (chave estrangeira referenciando "id_cliente" na tabela "clientes")
+Tabela "itens_pedido":
+Colunas: "id_item" (chave primária), "id_pedido" (chave estrangeira referenciando "id_pedido" na tabela "pedidos"), "produto", "quantidade"
+Tabela "adicionais":
+Colunas: "id_adicionais" (chave primária), "descricao" 
+Tabela "adicionais_item":
+Colunas: "id_adicionais" (chave estrangeira referenciando "id_adicionais" na tabela "adicionais"), "id_item" (chave estrangeira referenciando "id_item" na tabela "itens_pedido")
+Dessa forma, a tabela "adicionais" armazena a descrição dos adicionais possíveis, evitando repetição, e "adicionais_item" relaciona os adicionais com o item, resolvendo o problema de adicionais aninhados e deixando na normalização 1NF. Na sequência, "clientes" armazena as informações dos clientes, eliminando a repetição do nome do cliente em cada registro da tabela "pedidos". A tabela "itens_pedido" armazena os detalhes dos itens de cada pedido, permitindo que cada pedido possa ter múltiplos itens associados.
+Essa estrutura normalizada resolve a dependência parcial da chave primária e segue as regras da 2ª Forma Normal (2NF).
+
+############################
+
+
+3 - Considere a seguinte tabela:
+
+Tabela "vendas":
+
+Colunas: "id_venda" (chave primária), "id_cliente" (chave estrangeira referenciando "id_cliente" na tabela "clientes"), "nome_cliente", "id_produto" (chave estrangeira referenciando "id_produto" na tabela "produtos"), "nome_produto", "preco_produto", "quantidade"
+Nessa tabela, as colunas "nome_cliente", "nome_produto" e "preco_produto" são dependentes parciais da chave primária. Além disso, a coluna "quantidade" depende apenas do "id_venda", mas não do "id_produto".
+
+Seu objetivo é normalizar essa tabela para a 3ª Forma Normal (3NF), eliminando as dependências parciais e transitivas. Lembre-se que para estar na 3NF é necessário estar na antes na 1NF e na 2NF.
+
+
+Guia:
+
+A tabela "vendas" viola a 2ª e 3ª Forma Normal (2NF e 3NF) devido às dependências parciais e transitivas presentes nas colunas "nome_cliente", "nome_produto" e "preco_produto". Para atender às formas normais, precisamos eliminar essas dependências.
+
+Resposta
+
+
+A nova estrutura de tabelas seria a seguinte:
+Tabela "clientes":
+Colunas: "id_cliente" (chave primária), "nome_cliente"
+Tabela "produtos":
+Colunas: "id_produto" (chave primária), "nome_produto", "preco_produto"
+Tabela "vendas":
+Colunas: "id_venda" (chave primária), "id_cliente" (chave estrangeira referenciando "id_cliente" na tabela "clientes")
+Tabela "itens_venda":
+Colunas: "id_item" (chave primária), "id_venda" (chave estrangeira referenciando "id_venda" na tabela "vendas"), "id_produto" (chave estrangeira referenciando "id_produto" na tabela "produtos"), "quantidade"
+Dessa forma, a tabela "clientes" armazena as informações dos clientes, eliminando a repetição do nome do cliente na tabela "vendas". A tabela "produtos" armazena as informações dos produtos, eliminando a repetição do nome e preço do produto na tabela "vendas". A tabela "vendas" representa as vendas realizadas, e a tabela "itens_venda" armazena os detalhes dos itens de cada venda, permitindo a associação de cada venda com múltiplos itens.
+Essa estrutura normalizada resolve as dependências parciais e transitivas e segue as regras da 2ª e 3ª Forma Normal (2NF e 3NF).
+################################
+4 - Considere a seguinte tabela:
+
+Tabela "clientes":
+
+Colunas: "id_cliente" (chave primária), "nome", "telefones", "endereco", "codigo_produto", "nome_produto", "quantidade"
+Nessa tabela, temos uma repetição de dados, pois a coluna "telefones" pode conter mais de um valor. Além disso, as colunas "nome_produto" e "quantidade" dependem do "codigo_produto", e não da chave primária.
+
+Seu objetivo é normalizar essa tabela para a 3ª Forma Normal (3NF).
+
+Resposta:
+
+A nova estrutura de tabelas seria a seguinte:
+Tabela "clientes":
+Colunas: "id_cliente" (chave primária), "nome",  "endereco"
+Tabela "telefones":
+Colunas: "id_cliente" (chave estrangeira referenciando "id_cliente" na tabela "clientes"), "telefone"
+Tabela "produtos":
+Colunas: "codigo_produto" (chave primária), "nome_produto"
+Tabela "pedidos":
+Colunas: "id_pedido" (chave primária), "id_cliente" (chave estrangeira referenciando "id_cliente" na tabela "clientes"), "codigo_produto" (chave estrangeira referenciando "codigo_produto" na tabela "produtos"), "quantidade"
+Dessa forma, a tabela "clientes" armazena as informações dos clientes sem repetição de telefone. A tabela "produtos" armazena as informações dos produtos, eliminando a repetição do nome do produto. A tabela "pedidos" representa os pedidos realizados, associando cada pedido a um cliente e um produto através de chaves estrangeiras.
+Essa estrutura normalizada resolve a repetição de dados e as dependências transitivas, atendendo às regras da 1ª e 3ª Forma Normal (1NF e 3NF).

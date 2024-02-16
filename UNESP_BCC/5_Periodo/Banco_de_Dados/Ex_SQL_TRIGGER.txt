@@ -1,0 +1,125 @@
+Exercício 1
+
+Considere duas tabelas clientes e pedidos. A tabela clientes possui as colunas id_cliente e nome. A tabela pedidos possui as colunas id_pedido, id_cliente e valor. Escreva uma consulta SQL para listar o nome dos clientes juntamente com o valor total de pedidos feitos por cada um deles.
+
+Solução
+SELECT clientes.nome, SUM(pedidos.valor) AS total_pedidos
+FROM clientes
+JOIN pedidos ON clientes.id_cliente = pedidos.id_cliente
+GROUP BY clientes.nome;
+
+
+Exercício 2
+
+Considere duas tabelas funcionarios e departamentos. A tabela funcionarios possui as colunas id_funcionario, nome e id_departamento. A tabela departamentos possui as colunas id_departamento e nome. Escreva uma consulta SQL para listar o nome dos funcionários juntamente com o nome de seus respectivos departamentos.
+
+Solução
+SELECT funcionarios.nome, departamentos.nome AS nome_departamento
+FROM funcionarios
+JOIN departamentos ON funcionarios.id_departamento = departamentos.id_departamento;
+
+Exercício 3
+
+Considere uma tabela chamada alunos que possui as colunas id_aluno, nome e curso. Escreva uma consulta SQL para listar o nome dos alunos que estão matriculados no mesmo curso.
+
+Solução
+SELECT a1.nome, a2.nome
+FROM alunos a1
+JOIN alunos a2 ON a1.curso = a2.curso
+WHERE a1.nome  a2.nome;
+
+
+Exercício 4
+
+Considere uma tabela chamada produtos que possui as colunas id_produto, nome e estoque. Escreva uma consulta SQL para listar o nome dos produtos que possuem um estoque menor que a média de estoque de todos os produtos.
+
+Solução
+SELECT nome
+FROM produtos
+WHERE estoque  (SELECT AVG(estoque) FROM produtos);
+
+
+Exercício 5
+
+Considere uma tabela chamada funcionarios que possui as colunas id_funcionario, nome e salario. Escreva um trigger em SQL que seja acionado sempre que um novo funcionário for inserido na tabela e atualize o salário desse funcionário em 10%.
+
+Solução
+CREATE TRIGGER atualizar_salario
+AFTER INSERT ON funcionarios
+FOR EACH ROW
+BEGIN
+    UPDATE funcionarios
+    SET salario = salario  1.1
+    WHERE id_funcionario = NEW.id_funcionario;
+END;
+
+Exercício 6
+
+Considere uma tabela chamada pedidos que possui as colunas id_pedido, data_pedido e valor_total. Escreva um trigger em SQL que seja acionado sempre que um novo pedido for inserido na tabela e atualize a data do pedido para a data atual.
+
+CREATE TRIGGER atualizar_data_pedido
+BEFORE INSERT ON pedidos
+FOR EACH ROW
+BEGIN
+    SET NEW.data_pedido = CURDATE();
+END;
+
+
+Exercício 7
+
+Considere duas tabelas alunos e notas. A tabela alunos possui as colunas id_aluno, nome e curso. A tabela notas possui as colunas id_nota, id_aluno e valor. Crie uma trigger que, sempre que uma nova nota for inserida na tabela notas, atualize a média das notas do respectivo aluno na tabela alunos.
+
+-- Criação da trigger
+CREATE TRIGGER atualizar_media_notas
+AFTER INSERT ON notas
+FOR EACH ROW
+BEGIN
+  CALL atualizar_media_aluno(NEW.id_aluno);
+END;
+
+-- Criação da procedure
+DELIMITER 
+CREATE PROCEDURE atualizar_media_aluno(IN aluno_id INT)
+BEGIN
+  DECLARE media DECIMAL(5,2);
+ 
+  SELECT AVG(valor) INTO media
+  FROM notas
+  WHERE id_aluno = aluno_id;
+ 
+  UPDATE alunos
+  SET media_notas = media
+  WHERE id_aluno = aluno_id;
+END 
+DELIMITER ;
+
+
+Exercício 8
+
+Considere duas tabelas vendas e estoque. A tabela vendas possui as colunas id_venda, id_produto e quantidade. A tabela estoque possui as colunas id_produto e quantidade_disponivel. Crie uma trigger que, sempre que uma nova venda for registrada na tabela vendas, atualize a quantidade disponível do produto no estoque.
+
+-- Criação da trigger
+CREATE TRIGGER atualizar_quantidade_estoque
+AFTER INSERT ON vendas
+FOR EACH ROW
+BEGIN
+  CALL atualizar_estoque(NEW.id_produto, NEW.quantidade);
+END;
+
+-- Criação da procedure
+DELIMITER 
+CREATE PROCEDURE atualizar_estoque(IN produto_id INT, IN quantidade_venda INT)
+BEGIN
+  DECLARE quantidade_atual INT;
+ 
+  SELECT quantidade_disponivel INTO quantidade_atual
+  FROM estoque
+  WHERE id_produto = produto_id;
+ 
+  SET quantidade_atual = quantidade_atual - quantidade_venda;
+ 
+  UPDATE estoque
+  SET quantidade_disponivel = quantidade_atual
+  WHERE id_produto = produto_id;
+END 
+DELIMITER ;
